@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package  files_api.grpc.schema;
+
+option go_package = "./proto";
+
+service FilesAPI {
+  rpc GetFiles(GetFilesRequest) returns (FilesList) {}
+  rpc UploadFile(stream UploadFileRequest) returns (File) {}
+  rpc UpdateFilesStatuses(UpdateFilesStatusesRequest) returns (StatusResponse) {}
+}
+
+message GetFilesRequest {
+  repeated string ids = 1;
+}
+
+message File{
+  string id = 1;
+  string status = 2;
+  string owner_id =3;
+  string ownerType = 4;
+  string url = 5;
+  string object_key =6;
+  int64 size = 7;
+}
+
+message FilesList {
+  repeated File records = 1;
+}
+
+message UploadFileRequest {
+  oneof data {
+    FileInfo info = 1;
+    bytes chunk_data = 2;
+  };
+}
+
+message FileInfo {
+  string owner_id = 1;
+  string owner_type = 2;
+  string file_extension = 3;
+  string filename = 4;
+}
+
+/* update statuses */
+message UpdateFilesStatusesRequest {
+  repeated string approve_ids=1;
+  repeated string delete_ids=2;
+}
+
+message StatusResponse {
+  int64 approved_count = 1;
+  int64 deleted_count = 2;
+}
